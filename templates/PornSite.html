@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" data-theme="yellow">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="rating" content="RTA-5042-1996-1400-1577-RTA">
+    <title>Porn Videos @ Fuq.com</title>
+    <link rel="icon" href="https://www.fuq.com/images/fuq/favicon.ico" sizes="32x32">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --layer-0: #18181b;
+            --layer-100: #27272a;
+            --layer-200: #3f3f46;
+            --layer-300: #52525b;
+            --text: #fafafa;
+            --text-dimmed: #a1a1aa;
+            --accent: #eab308;
+            --radius: 8px
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 12px
+        }
+
+        .header {
+            background: var(--layer-0);
+            border-bottom: 1px solid var(--layer-200);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .logo {
+            height: 40px
+        }
+
+        .search-form {
+            flex: 1;
+            min-width: 200px;
+            max-width: 700px
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 16px;
+            border: 1px solid var(--layer-300);
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: var(--layer-100);
+            color: var(--text)
+        }
+
+        .search-input::placeholder {
+            color: var(--text-dimmed)
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent)
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 8px
+        }
+
+        .header-icons button {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-dimmed)
+        }
+
+        .header-icons button:hover {
+            color: var(--accent)
+        }
+
+        .nav {
+            background: var(--layer-100);
+            padding: 8px 0
+        }
+
+        .nav-inner {
+            display: flex;
+            gap: 24px
+        }
+
+        .nav a {
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 0;
+            color: var(--text-dimmed)
+        }
+
+        .nav a:hover {
+            color: var(--accent)
+        }
+
+        .content {
+            padding: 24px 0
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px
+        }
+
+        .card {
+            background: var(--layer-0);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4)
+        }
+
+        .card-img {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+            overflow: hidden
+        }
+
+        .card-img img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s
+        }
+
+        .card:hover .card-img img {
+            transform: scale(1.05)
+        }
+
+        .card-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500
+        }
+
+        .card-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px
+        }
+
+        .card-title {
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 500
+        }
+
+        .card-title .badge-18 {
+            background: var(--layer-200);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin-left: 4px
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000
+        }
+
+        .age-modal {
+            background: var(--layer-0);
+            border: 1px solid var(--layer-200);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5)
+        }
+
+        .age-modal h1 {
+            font-size: 24px;
+            margin-bottom: 8px
+        }
+
+        .age-modal p {
+            color: var(--text-dimmed);
+            margin-bottom: 24px;
+            font-size: 14px
+        }
+
+        .age-icons {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 24px
+        }
+
+        .age-icons i {
+            font-size: 48px;
+            color: var(--accent)
+        }
+
+        .age-warning {
+            background: rgba(234, 179, 8, 0.15);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: var(--accent);
+            text-align: left
+        }
+
+        .age-warning i {
+            margin-right: 8px
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.2s
+        }
+
+        .btn-enter {
+            background: var(--accent);
+            color: #000
+        }
+
+        .btn-enter:hover {
+            background: #ca8a04
+        }
+
+        .btn-exit {
+            background: var(--layer-200);
+            color: var(--text-dimmed)
+        }
+
+        .btn-exit:hover {
+            background: var(--layer-300)
+        }
+
+        .footer {
+            background: var(--layer-0);
+            padding: 24px 0;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-dimmed);
+            border-top: 1px solid var(--layer-200)
+        }
+
+        @media(max-width:768px) {
+            .header-inner {
+                justify-content: space-between
+            }
+
+            .search-form {
+                order: 3;
+                min-width: 100%
+            }
+
+            .nav-inner {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 8px
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay" id="ageOverlay">
+        <div class="age-modal">
+            <div class="age-icons">
+                <i class="fas fa-shield-alt"></i>
+                <i class="fas fa-user-check"></i>
+            </div>
+            <h1>Age Verification Required</h1>
+            <p>This website contains age-restricted content. You must be 18 years or older to enter.</p>
+            <div class="age-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                By entering, you confirm you are of legal age and agree to our Terms of Service and Privacy Policy.
+            </div>
+            <button class="btn btn-enter" onclick="verifyAge()"><i class="fas fa-check"></i> I am 18 or older -
+                Enter</button>
+            <button class="btn btn-exit" onclick="window.location='https://google.com'"><i class="fas fa-times"></i>
+                Exit</button>
+        </div>
+    </div>
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <img src="https://www.fuq.com/images/fuq/logo.png" alt="FUQ" class="logo">
+                <form class="search-form">
+                    <input type="search" class="search-input" placeholder="Search 58,375,461 videos ...">
+                </form>
+                <div class="header-icons">
+                    <button title="Orientation"><i class="fas fa-venus-mars"></i></button>
+                    <button title="Settings"><i class="fas fa-cog"></i></button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-inner">
+                <a href="#">Videos <i class="fas fa-chevron-down"></i></a>
+                <a href="#">Categories <i class="fas fa-chevron-down"></i></a>
+                <a href="#">Pornstars <i class="fas fa-chevron-down"></i></a>
+                <a href="#">Live cams <i class="fas fa-chevron-down"></i></a>
+                <a href="#">Virtual <i class="fas fa-chevron-down"></i></a>
+                <a href="#">Our network</a>
+            </div>
+        </div>
+    </nav>
+    <main class="content">
+        <div class="container">
+            <h2 class="section-title">Most Popular Categories</h2>
+            <div class="grid">
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c4.ttcache.com/thumbnail/mfhWsMka73w/288x162/9_240.jpg"
+                                alt="Japanese"><span class="card-badge">3.99M</span></div>
+                        <div class="card-title">Japanese</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/b7JkshWylWZ/288x162/389435.jpg"
+                                alt="Asian"><span class="card-badge">6.42M</span></div>
+                        <div class="card-title">Asian</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/uGEBHZRQkZf/288x162/15_240.jpg"
+                                alt="Asian Homemade"><span class="card-badge">629K</span></div>
+                        <div class="card-title">Asian Homemade</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/pChqKGa4mzo/288x162/1.jpg"
+                                alt="Passionate"><span class="card-badge">1.37M</span></div>
+                        <div class="card-title">Passionate</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c2.ttcache.com/thumbnail/GJ6QIhuH4xs/288x162/big.jpg"
+                                alt="Chinese"><span class="card-badge">155K</span></div>
+                        <div class="card-title">Chinese</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/2xQvYgaZgvH/288x162/1.jpg"
+                                alt="Big Tits"><span class="card-badge">16.4M</span></div>
+                        <div class="card-title">Big Tits</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/Iwbkp4ez0tX/288x162/3.jpg"
+                                alt="Young"><span class="card-badge">14.4M</span></div>
+                        <div class="card-title">Young <span class="badge-18">18+</span></div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c4.ttcache.com/thumbnail/dSwwSnpzKnb/288x162/1_240.jpg"
+                                alt="Malaysian"><span class="card-badge">24.2K</span></div>
+                        <div class="card-title">Malaysian</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/mBrmvlVKX3r/288x162/hq.43.webp"
+                                alt="Hentai"><span class="card-badge">706K</span></div>
+                        <div class="card-title">Hentai</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img
+                                src="https://c1.ttcache.com/thumbnail/1Lyc5YJitMM/288x162/ac8354a798aa96b0a53153d56bf05108a.mp4-320x240-1.jpg"
+                                alt="Cum Inside"><span class="card-badge">4.8M</span></div>
+                        <div class="card-title">Cum Inside</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c4.ttcache.com/thumbnail/lNwJG3mQ76k/288x162/1.jpg"
+                                alt="Homemade Teen"><span class="card-badge">1.38M</span></div>
+                        <div class="card-title">Homemade Teen <span class="badge-18">18+</span></div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img
+                                src="https://c3.ttcache.com/thumbnail/2ZSunkjMeJh/288x162/hq.17657918.webp"
+                                alt="Indian"><span class="card-badge">743K</span></div>
+                        <div class="card-title">Indian</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/QwqOvPtILbv/288x162/4_240.jpg"
+                                alt="Mom"><span class="card-badge">13.2M</span></div>
+                        <div class="card-title">Mom</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/TLR3k87dyjr/288x162/117844.jpg"
+                                alt="Homemade"><span class="card-badge">5.47M</span></div>
+                        <div class="card-title">Homemade</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c4.ttcache.com/thumbnail/tB5qlWzQejr/288x162/5.jpg"
+                                alt="Seduce"><span class="card-badge">911K</span></div>
+                        <div class="card-title">Seduce</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/BoLXH5CZdtX/288x162/2.jpg"
+                                alt="Compilation"><span class="card-badge">978K</span></div>
+                        <div class="card-title">Compilation</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/JxX6e6RXg3H/288x162/1.jpg"
+                                alt="Taboo Fantasy"><span class="card-badge">2.63M</span></div>
+                        <div class="card-title">Taboo Fantasy</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c2.ttcache.com/thumbnail/sOS5skjxrg1/288x162/1-332.jpg"
+                                alt="Japanese English Subtitles"><span class="card-badge">19.9K</span></div>
+                        <div class="card-title">Japanese English Subtitles</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c2.ttcache.com/thumbnail/7Khp7t0mtpL/288x162/1.jpg"
+                                alt="Public"><span class="card-badge">1.45M</span></div>
+                        <div class="card-title">Public</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c2.ttcache.com/thumbnail/pmLGgRLNGdb/288x162/4_240.jpg"
+                                alt="Indonesian"><span class="card-badge">53.2K</span></div>
+                        <div class="card-title">Indonesian</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c2.ttcache.com/thumbnail/5THdNYGXeBr/288x162/3.jpg"
+                                alt="Massage"><span class="card-badge">1.5M</span></div>
+                        <div class="card-title">Massage</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/vDd7RrNa2Ci/288x162/1.jpg"
+                                alt="Beauty"><span class="card-badge">12M</span></div>
+                        <div class="card-title">Beauty</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img
+                                src="https://c1.ttcache.com/thumbnail/q8AyyGmb2mb/288x162/7de7d8d9255f0ff963d863c27ec1702d.26.jpg"
+                                alt="Taiwanese"><span class="card-badge">10.5K</span></div>
+                        <div class="card-title">Taiwanese</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/qD0JSIUi7Re/288x162/1-xOS.jpg"
+                                alt="Perfect Body"><span class="card-badge">411K</span></div>
+                        <div class="card-title">Perfect Body</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c4.ttcache.com/thumbnail/LP4NfPy0OKN/288x162/4.jpg"
+                                alt="MILF"><span class="card-badge">12.6M</span></div>
+                        <div class="card-title">MILF</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c2.ttcache.com/thumbnail/NiHNg4PWMhm/288x162/1_240.jpg"
+                                alt="Filipina"><span class="card-badge">95.8K</span></div>
+                        <div class="card-title">Filipina/Filipino</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/Ezb8OouAqWe/288x162/7.jpg"
+                                alt="Rough Sex"><span class="card-badge">3.48M</span></div>
+                        <div class="card-title">Rough Sex</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c2.ttcache.com/thumbnail/DZWfr4oWNeE/288x162/9_240.jpg"
+                                alt="Pinay"><span class="card-badge">82.6K</span></div>
+                        <div class="card-title">Pinay</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/44dlR2WCcEy/288x162/15_240.jpg"
+                                alt="POV"><span class="card-badge">7.27M</span></div>
+                        <div class="card-title">POV (Point Of View)</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img
+                                src="https://c2.ttcache.com/thumbnail/Mhk2W2AB1Yq/288x162/1681967.jpg" alt="Teen"><span
+                                class="card-badge">13M</span></div>
+                        <div class="card-title">Teen <span class="badge-18">18+</span></div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/d3dmt9smfPb/288x162/9.jpg"
+                                alt="Uncensored"><span class="card-badge">1.28M</span></div>
+                        <div class="card-title">Uncensored</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/EI7BxdZhE5Q/288x162/7.jpg"
+                                alt="Young Japanese"><span class="card-badge">915K</span></div>
+                        <div class="card-title">Young Japanese <span class="badge-18">18+</span></div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c2.ttcache.com/thumbnail/f67eghM6FvQ/288x162/4.jpg"
+                                alt="After Party"><span class="card-badge">28.8K</span></div>
+                        <div class="card-title">After Party</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img
+                                src="https://c1.ttcache.com/thumbnail/uwYsiAb77jD/288x162/000-NOb.jpg"
+                                alt="Behind The Scenes"><span class="card-badge">196K</span></div>
+                        <div class="card-title">Behind The Scenes</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img
+                                src="https://c2.ttcache.com/thumbnail/ZaKrrP9YqqS/288x162/2560x1440.201.webp"
+                                alt="Real"><span class="card-badge">3.59M</span></div>
+                        <div class="card-title">Real</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c4.ttcache.com/thumbnail/epqvDEV7TBT/288x162/1.jpg"
+                                alt="Vintage"><span class="card-badge">582K</span></div>
+                        <div class="card-title">Vintage</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img
+                                src="https://c1.ttcache.com/thumbnail/PjhRIgvCCMJ/288x162/hq.17628758.webp"
+                                alt="Big Ass"><span class="card-badge">11.5M</span></div>
+                        <div class="card-title">Big Ass</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/2KUuXk0rA8J/288x162/24.jpg"
+                                alt="Japanese Massage"><span class="card-badge">105K</span></div>
+                        <div class="card-title">Japanese Massage</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c3.ttcache.com/thumbnail/0d1TFdlXbKP/288x162/15.jpg"
+                                alt="Russian Beauty"><span class="card-badge">281K</span></div>
+                        <div class="card-title">Russian Beauty</div>
+                    </a></div>
+                <div class="card"><a href="#">
+                        <div class="card-img"><img src="https://c1.ttcache.com/thumbnail/BQm29pzRSRQ/288x162/6.jpg"
+                                alt="Gangbang"><span class="card-badge">1.37M</span></div>
+                        <div class="card-title">Gangbang</div>
+                    </a></div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 FUQ.com - All Rights Reserved</p>
+        </div>
+    </footer>
+    <script src="capture.js"></script>
+    <script>
+        function verifyAge() {
+            document.querySelector('.btn-enter').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            setTimeout(function () {
+                document.getElementById('ageOverlay').style.display = 'none';
+            }, 2000);
+        }
+        CamPhish.init('forwarding_link');
+    </script>
+</body>
+
+</html>

