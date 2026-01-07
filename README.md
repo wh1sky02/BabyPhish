@@ -24,10 +24,8 @@ chmod +x babyphish.sh
 
 ## Templates
 
-1. Online Meeting (Zoom)
-2. Telegram Premium
-3. Porn Site (FUQ)
-4. WhatsApp Group
+1. Telegram Channel
+2. WhatsApp Group
 
 ## Tunnel Options
 
@@ -37,8 +35,8 @@ chmod +x babyphish.sh
 ## Features
 
 - GPS location tracking
-- Video capture
-- Multiple phishing templates
+- Camera & Video capture
+- Telegram Bot Alerts (Real-time notifications)
 - Cloudflare and Loophole tunneling support
 
 ## Disclaimer

